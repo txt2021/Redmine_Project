@@ -1,35 +1,25 @@
-
-
-const Page = require('./page');
+const page = require('./page.js');
+const inputUsername = '[id="username"]';
+const inputPassword = '[id="password"]';
+const btnSubmit = '[type="submit"]';
+const btnResetPassword = '[href="/account/lost_password"]';
 
 class LoginPage extends Page {
 
-    get inputUsername () {
-        return $('[id="username"]');
+    async setinputUsername(testUsername){
+        await page.setValue(inputUsername, testUsername)
+    }
+    async setinputPassword(testPass){
+        await page.setValue(inputPassword, testPass)        
     }
 
-    get inputPassword () {
-        return $('[id="password"]');
+    async clickSubmitButton(){
+        await page.click(btnSubmit)
     }
 
-    get btnSubmit () {
-        return $('[type="submit"]');
+    async clickResetPasswordButton(){
+        await page.click(btnResetPassword)
     }
-
-    get btnResetPassword () {
-        return $('[href="/account/lost_password"]');
-    }
-
-    clickSubmitButton(){
-        this.btnSubmit.click()
-    }
-
-    clickResetPasswordButton(){
-        this.btnResetPassword.click()
-    }
-
-    
-
-}
+} 
 
 module.exports = new LoginPage();

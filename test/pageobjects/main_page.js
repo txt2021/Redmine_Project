@@ -1,6 +1,10 @@
+const page = require('./page.js');
+const searchButton = '#q';
+
 class Main_Page{
-    get searchButton(){
-        return $('#q')
+    async setsearchButton(text){
+        await page.setValue(searchButton, text)
+        
     }
     
 }

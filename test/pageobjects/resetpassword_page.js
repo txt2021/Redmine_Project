@@ -1,15 +1,15 @@
+const page = require('./page.js');
+const inputEmail = 'mail';
+const btnSubmit = '[type="submit"]';
+
 class ResetPassword_Page{
 
-    get inputEmail(){
-        return $('mail')
-    }
-
-    get btnSubmit(){
-        return $('[type="submit"]');
-    }
-
-    clickSubmitButton(){
-        this.btnSubmit.click()
+    async setinputEmail(text){
+        await page.setValue(inputEmail, text)
+    }    
+    
+    async clickSubmitButton(){
+        await page.click(btnSubmit)
     }
     
 }
