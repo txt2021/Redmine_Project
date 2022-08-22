@@ -1,8 +1,8 @@
-const page = require('./page.js');
-const inputEmail = 'mail';
+const page = require('D:/trainee/Redmine_Project/test/pageobjects/page.js');
+const inputEmail = '[name="mail"]';
 const btnSubmit = '[type="submit"]';
 
-class ResetPassword_Page{
+class ResetPassword_Page {
 
     async setinputEmail(text){
         await page.setValue(inputEmail, text)

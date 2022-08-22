@@ -1,10 +1,5 @@
-
-module.exports = class Page {
-
-    open (path) {
-        return browser.url(`https://the-internet.herokuapp.com/${path}`)
-    }
-
+class Page {
+   
     async click(locator){
         await $(locator).click();
     }
@@ -13,5 +8,4 @@ module.exports = class Page {
         await $(locator).setValue(text);
     }
 }
-
 module.exports = new Page();

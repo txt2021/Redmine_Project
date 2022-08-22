@@ -1,10 +1,10 @@
-const page = require('./page.js');
+const page = require('D:/trainee/Redmine_Project/test/pageobjects/page.js');
 const inputUsername = '[id="username"]';
 const inputPassword = '[id="password"]';
 const btnSubmit = '[type="submit"]';
 const btnResetPassword = '[href="/account/lost_password"]';
 
-class LoginPage extends Page {
+class LoginPage {
 
     async setinputUsername(testUsername){
         await page.setValue(inputUsername, testUsername)

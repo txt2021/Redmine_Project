@@ -1,4 +1,4 @@
-const page = require('./page.js');
+const page = require('D:/trainee/Redmine_Project/test/pageobjects/page.js');
 const inputUsername = '#user_login';
 const inputPassword = '#user_password';
 const inputConfirmPassword = '#user_password_confirmation';
@@ -9,7 +9,7 @@ const inputNick = '#user_custom_field_values_3';
 const btnSubmit ='[type="submit"]';
 
 
-class Register_Page{
+class Register_Page {
    
     async setinputUsername(text){
         await page.setValue(inputUsername, text)
