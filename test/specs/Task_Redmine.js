@@ -23,7 +23,7 @@ describe('Redmine testing', () => {
       await loginPage.clickSubmitButton();  
     }) 
 
-    xit('TC03 - Sign in to Redmine with an already existing username', async() => { 
+    it('TC03 - Sign in to Redmine with an already existing username', async() => { 
       await browser.url('https://www.redmine.org/account/register')    
       await register_page.setinputUsername(testUsername2); 
       await register_page.setinputPassword(testPass); 
@@ -35,20 +35,20 @@ describe('Redmine testing', () => {
       await register_page.clickSubmitButton();
   }) 
 
-    xit('TC04 - Find the requested information using Redmine search', async() => {   
+    it('TC04 - Find the requested information using Redmine search', async() => {   
       await browser.url('https://www.redmine.org/')  
       await main_page.setsearchButton(searchtext);
       await browser.keys("\uE007");    
     }) 
 
-    xit('TC05 - User password recovery on Redmine', async() => {   
+    it('TC05 - User password recovery on Redmine', async() => {   
       await browser.url('https://www.redmine.org/login') 
       await loginPage.clickResetPasswordButton();
       await resetpassword_page.setinputEmail(testEmail2);
       await resetpassword_page.clickSubmitButton(); 
     }) 
 
-    xit('TC01 - Sign up to Redmine with correct credentials', async() => {   
+    it('TC01 - Sign up to Redmine with correct credentials', async() => {   
       await browser.url('https://www.redmine.org/login')  
       await loginPage.setinputUsername(testUsername2);
       await loginPage.setinputPassword(testPass2)
