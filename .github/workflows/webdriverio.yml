@@ -1,42 +1,54 @@
-name: Main Github Actions
+name: Playwright Tests
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - 'fixed_redmine_project' # (main branch) Set branch of the GH repo to push      
+    branches: fixed_redmine_project
+  pull_request:
+    branches: fixed_redmine_project
 jobs:
-  test_suite: # Name of the job
-      runs-on: ubuntu-latest
-      steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16.9.1' # In command line run “node -v” and choose your version
-      - run: npm ci
-     #  - run: npm config set script-shell "G:\Git\bin\bash.exe"
-      - name: run test
-        run: npm run test:headless # Our name of the headless script
-      - name: Copy History
-        if: always()
-        run: cp -r $(pwd)/docs/history/. $(pwd)/allure-results/history
-      - name: Generate Report
-        if: always()
-        run: npm run allure:generate # Name of the allure generate script
-      - name: Upload Results
-        uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: allure-results
-          path: ./docs # Name of the folder with allure results                    
-      - name: Publishing Allure artifact to Github Actions
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: allure-report
-          path: allure-report       
-      - name: Deploy report
-        uses: JamesIves/github-pages-deploy-action@4.1.4
-        if: always()
-        with:
-          branch: allure-branch # The branch the action should deploy to.
-          folder: allure-report # The folder the action should deploy.
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
+    - name: Install dependencies
+      run: npm ci
+    - name: run test
+      run: npm run test:headless # Our name of the headless script
+    - name: Copy History
+      if: always()
+      run: cp -r $(pwd)/docs/history/. $(pwd)/allure-results/history
+    - name: Generate Report
+      if: always()
+      run: npm run allure:generate # Name of the allure generate script
+    - name: Upload Results
+      uses: actions/upload-artifact@v1
+      if: always()
+      with:
+        repository: txt2021/Redmine_Project
+        ref: allure-branch
+        path: ./docs
+    - name: Copy History
+      if: always()
+      run: cp -r $(pwd)/docs/history/. $(pwd)/allure-results/history
+    - name: Generate Allure Report
+      run: npm run generate
+    - uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: allure-report
+        path: allure-report/
+        retention-days: 30
+    - name: Push to repository
+      uses: cpina/github-action-push-to-another-repository@main
+      if: always()
+      env:
+        API_TOKEN_GITHUB: ${{ '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' }}
+      with:
+        source-directory: 'allure-report'
+        destination-github-username: 'txt2021'
+        destination-repository-name: 'Redmine_Project'
+        user-email: txt2021a@gmail.com
+        target-branch: allure-branch
