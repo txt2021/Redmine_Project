@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Webdriver Tests
 on:
   push:
     branches: fixed_redmine_project
