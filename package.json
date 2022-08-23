@@ -14,7 +14,10 @@
     "wdio-chromedriver-service": "^7.3.2"
   },
   "scripts": {
-    "wdio": "wdio run wdio.conf.js"
+    "wdio": "wdio run wdio.conf.js",
+    "test:headless": "npx wdio wdio.chrome.headless.conf.js",
+    "allure:serve": "npx allure serve allure-results",
+    "allure:generate": "npx allure generate allure-results --clean"
   },
   "dependencies": {
     "mocha-allure-reporter": "^1.4.0"

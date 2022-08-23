@@ -1,72 +1,53 @@
-name: Test
-
+	name: Main Github Actions
 on:
   push:
     branches:
-      - main
-      - v7
-  pull_request:
-
+      - 'fixed_redmine_project' 
 jobs:
-  linux:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+  test_suite: 
+      runs-on: ubuntu-latest 
+      steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: Install Dependencies
-        run: npm ci
-      - name: Bootstrap Packages
-        run: npm run setup-full
-      - name: Dependency Check
-        run: npm run test:depcheck
-      - name: Lint / Typings / Unit / Smoke Tests
-        run: npm run test
-  e2e-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+          node-version: '16.16.0' 
+      - run: npm ci
+#      - run: npm config set script-shell "C:\Program Files\Git\bin\bash.exe"
+      - name: run test
+        run: npm run test:headless # Our name of the headless script
+      - name: Copy History
+        if: always()
+        run: cp -r $(pwd)/docs/history/. $(pwd)/allure-results/history
+      - name: Generate Report
+        if: always()
+        run: npm run allure:generate # Name of the allure generate script
+      - name: Upload Results
+        uses: actions/upload-artifact@v1
+        if: always()
         with:
-          node-version: 18.x
-      - name: Install Dependencies
-        run: npm ci
-      - name: Bootstrap Packages
-        run: npm run setup-full
-      - name: Lint / Dependencies / Unit / Smoke Tests
-        run: npm run test:eslint && npm run test:typings && npm run test:unit
-     
-  e2e-mac:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+          name: allure-results
+          path: ./allure-results # Name of the folder with allure results                    
+      - name: Publishing Allure artifact to Github Actions
+        uses: actions/upload-artifact@v2
+        if: always()
         with:
-          node-version: 18.x
-      - name: Install Dependencies
-        run: npm ci
-      - name: Bootstrap Packages
-        run: npm run setup-full
-      - name: E2E Protocol Tests
-        uses: nick-invision/retry@v2
+          name: allure-report
+          path: allure-report        
+      - name: Deploy report
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        if: always()
         with:
-          timeout_minutes: 20
-          max_attempts: 3
-          command: npm run test:e2e
-      
-      - name: E2E Connection Test
-        run: npm run test:e2e:cloud
-        if: github.ref == 'refs/heads/main'
+          branch: fixed_redmine_project # The branch the action should deploy to.
+          folder: allure-report # The folder the action should deploy.
+          target-folder: docs
+      - name: Pushes docs to another repository
+        uses: cpina/github-action-push-to-another-repository@v1.3
+        if: always()
         env:
-          SAUCE_USERNAME: ${{secrets.SAUCE_USERNAME}}
-          SAUCE_ACCESS_KEY: ${{secrets.SAUCE_ACCESS_KEY}}
-      - name: E2E Connection Test w/ Params
-        run: npm run test:e2e:cloud -- --user $SAUCE_USERNAME_PARAM --key $SAUCE_ACCESS_KEY_PARAM
-        if: github.ref == 'refs/heads/main'
-        env:
-          SAUCE_USERNAME_PARAM: ${{secrets.SAUCE_USERNAME}}
-          SAUCE_ACCESS_KEY_PARAM: ${{secrets.SAUCE_ACCESS_KEY}}
+          API_TOKEN_GITHUB: ${{ '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' }} # Instruction where to get token is below
+        with:
+          source-directory: 'docs'
+          destination-github-username: 'txt2021' # Your username
+          destination-repository-name: 'Redmine_Project' # Name of your repo
+          user-email: txt2021@gmail.com # Your email
+          target-branch: fixed_redmine_project 
